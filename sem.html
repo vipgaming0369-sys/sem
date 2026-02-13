@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GGU CSE IV Semester // Programme Structure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #151515;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent: #ffffff;
+            --border: #333333;
+            --glow: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.15s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: all 0.3s ease;
+            mix-blend-mode: difference;
+        }
+
+        /* Animated Background Grid */
+        .grid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridScroll 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes gridScroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+
+        /* Scanline Effect */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(255, 255, 255, 0.02) 51%,
+                transparent 52%
+            );
+            background-size: 100% 4px;
+            animation: scanlines 8s linear infinite;
+            pointer-events: none;
+            z-index: 9997;
+        }
+
+        @keyframes scanlines {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 4px;
+            animation: glitchText 3s infinite;
+        }
+
+        @keyframes glitchText {
+            0%, 90%, 100% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+            92%, 94%, 96%, 98% { text-shadow: 2px 0 10px rgba(255, 255, 255, 0.8), -2px 0 10px rgba(255, 255, 255, 0.3); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a:hover::before {
+            width: 100%;
+        }
+
+        /* Template Container */
+        .template-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+
+        .template {
+            display: none;
+            padding: 150px 50px 50px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .template.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero Template */
+        .hero-section {
+            height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 120px;
+            font-weight: 900;
+            letter-spacing: 10px;
+            margin-bottom: 20px;
+            animation: slideUp 1s ease;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+            color: var(--text-secondary);
+            letter-spacing: 6px;
+            margin-bottom: 60px;
+            animation: slideUp 1s ease 0.2s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 30px;
+            animation: slideUp 1s ease 0.4s both;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 18px 50px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: var(--text-primary);
+            border: 2px solid var(--accent);
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+            clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent);
+            transition: left 0.4s;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            left: 0;
+        }
+
+        .btn:hover {
+            color: var(--bg-primary);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-secondary {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .btn-secondary::before {
+            background: var(--bg-primary);
+        }
+
+        .btn-secondary:hover {
+            color: var(--accent);
+        }
+
+        .btn-outline {
+            clip-path: none;
+            border-style: dashed;
+        }
+
+        .btn-glow {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.6); }
+        }
+
+        /* Grid Template */
+        .grid-section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 60px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 80px;
+            letter-spacing: 8px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 50px 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            font-size: 50px;
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        .feature-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .feature-text {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        /* Terminal Template */
+        .terminal-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px;
+        }
+
+        .terminal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: var(--bg-tertiary);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        .terminal-body {
+            padding: 30px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .terminal-line {
+            margin-bottom: 15px;
+            animation: typewriter 0.5s steps(40) both;
+        }
+
+        .terminal-line:nth-child(2) { animation-delay: 0.5s; }
+        .terminal-line:nth-child(3) { animation-delay: 1s; }
+        .terminal-line:nth-child(4) { animation-delay: 1.5s; }
+
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        .terminal-prompt {
+            color: var(--accent);
+        }
+
+        .terminal-input {
+            color: var(--text-secondary);
+        }
+
+        /* Data Template */
+        .data-section {
+            padding: 100px 0;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 80px auto 0;
+        }
+
+        .data-card {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border: 1px solid var(--border);
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.6s;
+        }
+
+        .data-card:hover::before {
+            left: 100%;
+        }
+
+        .data-card:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+        }
+
+        .data-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 72px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .data-label {
+            font-size: 18px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        /* Control Panel Template */
+        .control-panel {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 100px 20px;
+        }
+
+        .button-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 80px;
+        }
+
+        .button-group {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .button-group h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .btn-small {
+            padding: 12px 30px;
+            font-size: 14px;
+        }
+
+        .btn-large {
+            padding: 24px 60px;
+            font-size: 18px;
+        }
+
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            padding: 0;
+            clip-path: none;
+        }
+
+        /* Timeline Template */
+        .timeline-section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 100px 20px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 50px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 80px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 40px;
+            position: relative;
+            transition: all 0.4s;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .timeline-date {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        .timeline-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .timeline-text {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            top: 40px;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border: 4px solid var(--bg-primary);
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        /* Contact Template */
+        .contact-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 100px 20px;
+        }
+
+        .contact-form {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 60px;
+            margin-top: 80px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 18px 25px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 60px 50px;
+            margin-top: 150px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            text-align: left;
+            margin-bottom: 50px;
+        }
+
+        .footer-section h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--text-secondary);
+            line-height: 2;
+            text-decoration: none;
+            display: block;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent);
+        }
+
+        .copyright {
+            font-size: 14px;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .mobile-menu-toggle span {
+            width: 30px;
+            height: 3px;
+            background: var(--accent);
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 90px;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 999;
+            padding: 30px;
+        }
+
+        .mobile-nav.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .mobile-nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 18px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 600;
+            padding: 15px;
+            border: 1px solid var(--border);
+            display: block;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .mobile-nav-links a:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .feature-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+
+            .button-showcase {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                cursor: default;
+            }
+
+            .cursor,
+            .cursor-follower {
+                display: none;
+            }
+
+            nav {
+                padding: 20px 25px;
+            }
+
+            .logo {
+                font-size: 22px;
+                letter-spacing: 2px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .template {
+                padding: 120px 25px 30px;
+            }
+
+            .hero-section {
+                height: auto;
+                min-height: calc(100vh - 100px);
+                padding: 40px 0;
+            }
+
+            .hero-title {
+                font-size: 48px;
+                letter-spacing: 4px;
+                line-height: 1.2;
+            }
+
+            .hero-subtitle {
+                font-size: 14px;
+                letter-spacing: 3px;
+                margin-bottom: 30px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+                gap: 15px;
+            }
+
+            .hero-buttons .btn {
+                width: 100%;
+                padding: 15px 30px;
+                font-size: 14px;
+            }
+
+            .section-title {
+                font-size: 36px;
+                letter-spacing: 4px;
+                margin-bottom: 50px;
+            }
+
+            .feature-grid,
+            .data-grid,
+            .button-showcase {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .feature-card {
+                padding: 35px 25px;
+                clip-path: none;
+            }
+
+            .feature-icon {
+                font-size: 40px;
+                margin-bottom: 20px;
+            }
+
+            .feature-title {
+                font-size: 22px;
+                letter-spacing: 1px;
+            }
+
+            .feature-text {
+                font-size: 15px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                flex-direction: column !important;
+                margin-bottom: 50px;
+            }
+
+            .timeline-content {
+                width: 100%;
+                margin-left: 50px;
+                padding: 25px;
+            }
+
+            .timeline-marker {
+                left: 20px;
+                top: 25px;
+                width: 15px;
+                height: 15px;
+            }
+
+            .timeline-date {
+                font-size: 20px;
+            }
+
+            .timeline-title {
+                font-size: 18px;
+            }
+
+            .timeline-text {
+                font-size: 14px;
+            }
+
+            .data-card {
+                padding: 40px 25px;
+            }
+
+            .data-number {
+                font-size: 56px;
+            }
+
+            .data-label {
+                font-size: 14px;
+                letter-spacing: 2px;
+            }
+
+            .terminal-section,
+            .contact-section,
+            .control-panel,
+            .timeline-section {
+                padding: 80px 0;
+            }
+
+            .terminal-body {
+                padding: 20px;
+                font-size: 12px;
+            }
+
+            .contact-form {
+                padding: 30px 25px;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 15px 20px;
+                font-size: 15px;
+            }
+
+            .btn-large {
+                padding: 18px 40px;
+                font-size: 16px;
+            }
+
+            .btn-small {
+                padding: 12px 25px;
+                font-size: 13px;
+            }
+
+            .button-group {
+                padding: 30px 25px;
+            }
+
+            .button-group h3 {
+                font-size: 18px;
+            }
+
+            footer {
+                padding: 40px 25px;
+                margin-top: 80px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                margin-bottom: 40px;
+            }
+
+            .footer-section h4 {
+                font-size: 18px;
+            }
+
+            .copyright {
+                font-size: 11px;
+                line-height: 1.6;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 36px;
+                letter-spacing: 2px;
+            }
+
+            .hero-subtitle {
+                font-size: 12px;
+                letter-spacing: 2px;
+            }
+
+            .section-title {
+                font-size: 28px;
+                letter-spacing: 2px;
+            }
+
+            .feature-title {
+                font-size: 18px;
+            }
+
+            .feature-text {
+                font-size: 14px;
+            }
+
+            .data-number {
+                font-size: 42px;
+            }
+
+            .btn {
+                padding: 14px 30px;
+                font-size: 13px;
+                letter-spacing: 2px;
+            }
+
+            nav {
+                padding: 15px 20px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .template {
+                padding: 100px 20px 30px;
+            }
+        }
+
+        /* Glitch Effects */
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        .glitch:hover {
+            animation: glitch 0.3s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursors -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Animated Background -->
+    <div class="grid-background"></div>
+    <div class="scanline"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">GGU CSE</div>
+        <ul class="nav-links">
+            <li><a href="#" data-template="hero">HOME</a></li>
+            <li><a href="#" data-template="grid">COURSES</a></li>
+            <li><a href="#" data-template="terminal">PREREQUISITES</a></li>
+            <li><a href="#" data-template="data">CREDITS</a></li>
+            <li><a href="#" data-template="control">RESOURCES</a></li>
+            <li><a href="#" data-template="timeline">SYLLABUS</a></li>
+            <li><a href="#" data-template="contact">CONTACT</a></li>
+        </ul>
+        <div class="mobile-menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <ul class="mobile-nav-links">
+            <li><a href="#" data-template="hero">HOME</a></li>
+            <li><a href="#" data-template="grid">COURSES</a></li>
+            <li><a href="#" data-template="terminal">PREREQUISITES</a></li>
+            <li><a href="#" data-template="data">CREDITS</a></li>
+            <li><a href="#" data-template="control">RESOURCES</a></li>
+            <li><a href="#" data-template="timeline">SYLLABUS</a></li>
+            <li><a href="#" data-template="contact">CONTACT</a></li>
+        </ul>
+    </div>
+
+    <!-- Template Container -->
+    <div class="template-container">
+        <!-- Hero Template -->
+        <div id="hero" class="template active">
+            <div class="hero-section">
+                <h1 class="hero-title">CSE IV<br>SEMESTER</h1>
+                <p class="hero-subtitle">B.TECH COMPUTER SCIENCE & ENGINEERING</p>
+                <div style="margin-bottom: 40px; color: var(--text-secondary); font-size: 18px; letter-spacing: 2px;">
+                    GODAVARI GLOBAL UNIVERSITY // REGULATION: GGU-BT-24
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn btn-secondary glitch" onclick="document.querySelector('[data-template=grid]').click()">VIEW COURSES</button>
+                    <button class="btn btn-outline" onclick="document.querySelector('[data-template=data]').click()">CREDITS INFO</button>
+                    <button class="btn btn-glow" onclick="document.querySelector('[data-template=timeline]').click()">SYLLABUS</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid Template -->
+        <div id="grid" class="template">
+            <div class="grid-section">
+                <h2 class="section-title">COURSE STRUCTURE</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <span class="feature-icon">◆</span>
+                        <h3 class="feature-title">DESIGN & ANALYSIS OF ALGORITHMS</h3>
+                        <p class="feature-text">Code: 2401050101 | L-T-P: 3-1-0 | Credits: 4<br>
+                        Algorithm analysis, Divide & Conquer, Greedy, Dynamic Programming, Backtracking, NP-Complete problems.</p>
+                        <button class="btn btn-small btn-full">50+50 = 100 MARKS</button>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">◇</span>
+                        <h3 class="feature-title">COMPUTER NETWORKS</h3>
+                        <p class="feature-text">Code: 2401050102 | L-T-P: 3-0-0 | Credits: 3<br>
+                        OSI Model, TCP/IP, Data Link Layer, Network Layer, Routing, Transport Layer, Application Layer protocols.</p>
+                        <button class="btn btn-small btn-full btn-secondary">50+50 = 100 MARKS</button>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">◈</span>
+                        <h3 class="feature-title">FORMAL LANGUAGES & AUTOMATA</h3>
+                        <p class="feature-text">Code: 2401050103 | L-T-P: 3-1-0 | Credits: 4<br>
+                        Finite Automata, Regular Expressions, Context-Free Grammars, Pushdown Automata, Turing Machines.</p>
+                        <button class="btn btn-small btn-full btn-outline">50+50 = 100 MARKS</button>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">◉</span>
+                        <h3 class="feature-title">JAVA PROGRAMMING</h3>
+                        <p class="feature-text">Code: 2401050301 | L-T-P: 3-0-2 | Credits: 4<br>
+                        Java Fundamentals, OOP Concepts, Inheritance, Exception Handling, File I/O, Applets, JDBC.</p>
+                        <button class="btn btn-small btn-full">50+50 = 100 MARKS</button>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">◊</span>
+                        <h3 class="feature-title">MACHINE LEARNING</h3>
+                        <p class="feature-text">Code: 2401050302 | L-T-P: 3-0-2 | Credits: 4<br>
+                        ML Concepts, Python for ML, Supervised & Unsupervised Learning, Neural Networks, Deep Learning.</p>
+                        <button class="btn btn-small btn-full btn-glow">50+50 = 100 MARKS</button>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">◎</span>
+                        <h3 class="feature-title">FULLSTACK DEVELOPMENT MODULE-1</h3>
+                        <p class="feature-text">Code: 2401050501 | L-T-P: 0-0-4 | Credits: 2<br>
+                        HTML, CSS, JavaScript, DOM Manipulation, ReactJS for building dynamic web applications.</p>
+                        <button class="btn btn-small btn-full btn-secondary">50+50 = 100 MARKS</button>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">★</span>
+                        <h3 class="feature-title">NATIONAL SERVICE SCHEME</h3>
+                        <p class="feature-text">Code: 2401191401 | L-T-P: 0-0-2 | Credits: 1<br>
+                        Community service, Environmental awareness, Social responsibility, Digital citizenship activities.</p>
+                        <button class="btn btn-small btn-full btn-outline">100 MARKS (VAC)</button>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">◐</span>
+                        <h3 class="feature-title">DATA VISUALIZATION LAB</h3>
+                        <p class="feature-text">Code: 2401050202 | L-T-P: 0-0-4 | Credits: 2<br>
+                        Power BI, Tableau, Data Preparation, Interactive Dashboards, DAX, Time Intelligence Analytics.</p>
+                        <button class="btn btn-small btn-full">50+50 = 100 MARKS</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terminal Template -->
+        <div id="terminal" class="template">
+            <div class="terminal-section">
+                <h2 class="section-title">PREREQUISITES & INFO</h2>
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dot"></div>
+                        <div class="terminal-dot"></div>
+                        <div class="terminal-dot"></div>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">system@ggu:~$</span>
+                            <span class="terminal-input"> check_prerequisites()</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">Design & Analysis of Algorithms: Data Structures [REQUIRED]</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">Machine Learning: Python Programming [RECOMMENDED]</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">Java Programming: Basic Programming Concepts [REQUIRED]</span>
+                        </div>
+                        <div class="terminal-line" style="margin-top: 20px;">
+                            <span class="terminal-prompt">system@ggu:~$</span>
+                            <span class="terminal-input"> get_contact_hours()</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">Total Contact Hours: 64 hours for theory courses</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">Lab Contact Hours: 32-90 hours based on course</span>
+                        </div>
+                        <div class="terminal-line" style="margin-top: 20px;">
+                            <span class="terminal-prompt">system@ggu:~$</span>
+                            <span class="terminal-input"> semester.status()</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">Status: ACTIVE | Regulation: GGU-BT-24 | Semester: IV</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">All systems operational. Ready for academic year.</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 20px; justify-content: center; margin-top: 50px; flex-wrap: wrap;">
+                    <button class="btn">VIEW TEXTBOOKS</button>
+                    <button class="btn btn-secondary">EXAM PATTERN</button>
+                    <button class="btn btn-outline">CO-PO MAPPING</button>
+                    <button class="btn btn-glow">SYLLABUS PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Template -->
+        <div id="data" class="template">
+            <div class="data-section">
+                <h2 class="section-title">SEMESTER STATISTICS</h2>
+                <div class="data-grid">
+                    <div class="data-card">
+                        <div class="data-number">24</div>
+                        <div class="data-label">TOTAL CREDITS</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-number">08</div>
+                        <div class="data-label">SUBJECTS</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-number">800</div>
+                        <div class="data-label">TOTAL MARKS</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-number">31</div>
+                        <div class="data-label">PERIODS/WEEK</div>
+                    </div>
+                </div>
+                <div style="max-width: 900px; margin: 80px auto; background: var(--bg-secondary); border: 1px solid var(--border); padding: 50px;">
+                    <h3 style="font-family: 'Orbitron', sans-serif; font-size: 28px; margin-bottom: 30px; text-align: center; letter-spacing: 2px;">CREDIT BREAKDOWN</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-bottom: 40px;">
+                        <div style="text-align: center; padding: 30px; background: var(--bg-tertiary); border: 1px solid var(--border);">
+                            <div style="font-size: 48px; font-weight: 700; margin-bottom: 10px;">15</div>
+                            <div style="color: var(--text-secondary); letter-spacing: 2px;">LECTURE HOURS</div>
+                        </div>
+                        <div style="text-align: center; padding: 30px; background: var(--bg-tertiary); border: 1px solid var(--border);">
+                            <div style="font-size: 48px; font-weight: 700; margin-bottom: 10px;">2</div>
+                            <div style="color: var(--text-secondary); letter-spacing: 2px;">TUTORIAL HOURS</div>
+                        </div>
+                        <div style="text-align: center; padding: 30px; background: var(--bg-tertiary); border: 1px solid var(--border);">
+                            <div style="font-size: 48px; font-weight: 700; margin-bottom: 10px;">14</div>
+                            <div style="color: var(--text-secondary); letter-spacing: 2px;">PRACTICAL HOURS</div>
+                        </div>
+                        <div style="text-align: center; padding: 30px; background: var(--bg-tertiary); border: 1px solid var(--border);">
+                            <div style="font-size: 48px; font-weight: 700; margin-bottom: 10px;">450</div>
+                            <div style="color: var(--text-secondary); letter-spacing: 2px;">INTERNAL MARKS</div>
+                        </div>
+                    </div>
+                    <div style="background: var(--bg-tertiary); border: 1px solid var(--accent); padding: 30px; text-align: center;">
+                        <div style="color: var(--text-secondary); font-size: 14px; letter-spacing: 2px; margin-bottom: 15px;">EXTERNAL EXAMINATION</div>
+                        <div style="font-size: 56px; font-weight: 900; color: var(--accent);">350 MARKS</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 50px;">
+                    <p style="color: var(--text-secondary); font-size: 16px; letter-spacing: 2px; margin-bottom: 30px;">
+                        * LATERAL ENTRY STUDENTS REQUIRE ADDITIONAL 3 CREDITS
+                    </p>
+                    <button class="btn btn-large">DOWNLOAD FULL STRUCTURE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel Template -->
+        <div id="control" class="template">
+            <div class="control-panel">
+                <h2 class="section-title">ACADEMIC RESOURCES</h2>
+                <div class="button-showcase">
+                    <div class="button-group">
+                        <h3>STUDY MATERIALS</h3>
+                        <button class="btn btn-full">LECTURE NOTES</button>
+                        <button class="btn btn-secondary btn-full">VIDEO LECTURES</button>
+                        <button class="btn btn-outline btn-full">PRACTICE PROBLEMS</button>
+                        <button class="btn btn-glow btn-full">PREVIOUS PAPERS</button>
+                    </div>
+                    <div class="button-group">
+                        <h3>QUICK ACCESS</h3>
+                        <button class="btn btn-small btn-full">TEXTBOOK PDFs</button>
+                        <button class="btn btn-small btn-full btn-secondary">REFERENCE BOOKS</button>
+                        <button class="btn btn-small btn-full btn-outline">LAB MANUALS</button>
+                        <button class="btn btn-small btn-full">ASSIGNMENTS</button>
+                    </div>
+                    <div class="button-group">
+                        <h3>ONLINE RESOURCES</h3>
+                        <button class="btn btn-icon btn-full">
+                            <span>▶</span> NPTEL LECTURES
+                        </button>
+                        <button class="btn btn-icon btn-full btn-secondary">
+                            <span>◼</span> COURSERA COURSES
+                        </button>
+                        <button class="btn btn-icon btn-full btn-outline">
+                            <span>⟳</span> UDEMY TUTORIALS
+                        </button>
+                    </div>
+                    <div class="button-group">
+                        <h3>EXAMINATION</h3>
+                        <button class="btn btn-small btn-full">INTERNAL EXAMS</button>
+                        <button class="btn btn-small btn-full btn-secondary">EXTERNAL EXAMS</button>
+                        <button class="btn btn-small btn-full btn-outline">MODEL PAPERS</button>
+                        <button class="btn btn-small btn-full btn-glow">RESULTS</button>
+                    </div>
+                    <div class="button-group">
+                        <h3>PROJECTS & LABS</h3>
+                        <div style="display: flex; gap: 15px; justify-content: center;">
+                            <button class="btn btn-circle" title="Mini Projects">◆</button>
+                            <button class="btn btn-circle btn-secondary" title="Lab Work">◇</button>
+                            <button class="btn btn-circle btn-outline" title="Assignments">◈</button>
+                        </div>
+                        <button class="btn btn-large btn-full glitch">PROJECT GUIDELINES</button>
+                    </div>
+                    <div class="button-group">
+                        <h3>PROGRAMMING PRACTICE</h3>
+                        <button class="btn btn-full">HACKERRANK</button>
+                        <button class="btn btn-secondary btn-full">LEETCODE</button>
+                        <button class="btn btn-outline btn-full">CODECHEF</button>
+                        <button class="btn btn-full">GEEKSFORGEEKS</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Template -->
+        <div id="timeline" class="template">
+            <div class="timeline-section">
+                <h2 class="section-title">COURSE HIGHLIGHTS</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">DAA</div>
+                            <h3 class="timeline-title">DESIGN & ANALYSIS OF ALGORITHMS</h3>
+                            <p class="timeline-text">Master algorithmic thinking with Brute Force, Divide & Conquer, Greedy techniques, Dynamic Programming, Backtracking, and Branch & Bound strategies. Understand NP-Hard and NP-Complete problems.</p>
+                            <button class="btn btn-small">4 CREDITS</button>
+                        </div>
+                        <div class="timeline-marker"></div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">CN</div>
+                            <h3 class="timeline-title">COMPUTER NETWORKS</h3>
+                            <p class="timeline-text">Learn network fundamentals including OSI Model, TCP/IP protocols, Data Link Layer functions, routing algorithms, IPv4/IPv6, transport layer protocols, and network security basics.</p>
+                            <button class="btn btn-small btn-secondary">3 CREDITS</button>
+                        </div>
+                        <div class="timeline-marker"></div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">FLAT</div>
+                            <h3 class="timeline-title">FORMAL LANGUAGES & AUTOMATA THEORY</h3>
+                            <p class="timeline-text">Study computational machines, finite automata (DFA/NFA), regular expressions, context-free grammars, pushdown automata, Turing machines, and the Chomsky hierarchy.</p>
+                            <button class="btn btn-small btn-outline">4 CREDITS</button>
+                        </div>
+                        <div class="timeline-marker"></div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">JAVA</div>
+                            <h3 class="timeline-title">JAVA PROGRAMMING</h3>
+                            <p class="timeline-text">Develop Java applications covering fundamentals, OOP concepts, inheritance, polymorphism, exception handling, packages, file operations, applets, and JDBC database connectivity.</p>
+                            <button class="btn btn-small btn-glow">4 CREDITS</button>
+                        </div>
+                        <div class="timeline-marker"></div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">ML</div>
+                            <h3 class="timeline-title">MACHINE LEARNING</h3>
+                            <p class="timeline-text">Explore ML fundamentals, Python for data analytics, supervised/unsupervised learning techniques, clustering, classification, neural networks, and deep learning architectures.</p>
+                            <button class="btn btn-small">4 CREDITS</button>
+                        </div>
+                        <div class="timeline-marker"></div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">FULLSTACK</div>
+                            <h3 class="timeline-title">FULLSTACK DEVELOPMENT</h3>
+                            <p class="timeline-text">Build modern web applications using HTML5, CSS3, JavaScript, DOM manipulation, and ReactJS. Create responsive, interactive interfaces with component-based architecture.</p>
+                            <button class="btn btn-small btn-secondary">2 CREDITS</button>
+                        </div>
+                        <div class="timeline-marker"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Template -->
+        <div id="contact" class="template">
+            <div class="contact-section">
+                <h2 class="section-title">CONNECT WITH US</h2>
+                <div style="text-align: center; margin-bottom: 60px; color: var(--text-secondary); font-size: 18px; letter-spacing: 2px;">
+                    <p style="margin-bottom: 10px;">GODAVARI GLOBAL UNIVERSITY</p>
+                    <p>CHAITANYA NAGAR, RAJAHMUNDRY</p>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <label for="name">STUDENT NAME</label>
+                        <input type="text" id="name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">EMAIL ADDRESS</label>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">SUBJECT</label>
+                        <input type="text" id="subject" placeholder="Inquiry about course/syllabus" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">MESSAGE</label>
+                        <textarea id="message" placeholder="Your message or query" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-full btn-large btn-secondary">SUBMIT INQUIRY</button>
+                </form>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 80px;">
+                    <div style="text-align: center; padding: 30px; background: var(--bg-secondary); border: 1px solid var(--border);">
+                        <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 20px; letter-spacing: 2px;">DEPARTMENT</h4>
+                        <p style="color: var(--text-secondary);">Computer Science & Engineering</p>
+                    </div>
+                    <div style="text-align: center; padding: 30px; background: var(--bg-secondary); border: 1px solid var(--border);">
+                        <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 20px; letter-spacing: 2px;">REGULATION</h4>
+                        <p style="color: var(--text-secondary);">GGU-BT-24</p>
+                    </div>
+                    <div style="text-align: center; padding: 30px; background: var(--bg-secondary); border: 1px solid var(--border);">
+                        <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 20px; letter-spacing: 2px;">SEMESTER</h4>
+                        <p style="color: var(--text-secondary);">IV (Fourth Semester)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>GODAVARI GLOBAL UNIVERSITY</h4>
+                <p>B.Tech Computer Science & Engineering - IV Semester curriculum designed to build strong foundations in algorithms, networking, programming, and emerging technologies.</p>
+            </div>
+            <div class="footer-section">
+                <h4>QUICK LINKS</h4>
+                <a href="#">University Website</a>
+                <a href="#">Academic Calendar</a>
+                <a href="#">Examination Schedule</a>
+                <a href="#">Library Portal</a>
+            </div>
+            <div class="footer-section">
+                <h4>RESOURCES</h4>
+                <a href="#">Student Portal</a>
+                <a href="#">Course Materials</a>
+                <a href="#">Lab Manuals</a>
+                <a href="#">Previous Papers</a>
+            </div>
+            <div class="footer-section">
+                <h4>CONNECT</h4>
+                <a href="#">Department Office</a>
+                <a href="#">Faculty Directory</a>
+                <a href="#">Student Support</a>
+                <a href="#">Feedback Form</a>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 GODAVARI GLOBAL UNIVERSITY // CHAITANYA NAGAR, RAJAHMUNDRY // REGULATION: GGU-BT-24
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const mobileNav = document.querySelector('.mobile-nav');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileMenuToggle.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+        });
+
+        // Custom Cursor (disabled on mobile)
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+
+        if (window.innerWidth > 768) {
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                
+                setTimeout(() => {
+                    cursorFollower.style.left = e.clientX + 'px';
+                    cursorFollower.style.top = e.clientY + 'px';
+                }, 100);
+            });
+
+            document.querySelectorAll('button, a').forEach(element => {
+                element.addEventListener('mouseenter', () => {
+                    cursor.style.transform = 'scale(1.5)';
+                    cursorFollower.style.transform = 'scale(1.5)';
+                });
+                
+                element.addEventListener('mouseleave', () => {
+                    cursor.style.transform = 'scale(1)';
+                    cursorFollower.style.transform = 'scale(1)';
+                });
+            });
+        }
+
+        // Template Switching (works for both desktop and mobile nav)
+        const navLinks = document.querySelectorAll('[data-template]');
+        const templates = document.querySelectorAll('.template');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const templateId = link.getAttribute('data-template');
+                
+                templates.forEach(template => {
+                    template.classList.remove('active');
+                });
+                
+                document.getElementById(templateId).classList.add('active');
+                
+                // Close mobile menu if open
+                mobileMenuToggle.classList.remove('active');
+                mobileNav.classList.remove('active');
+                
+                // Scroll to top smoothly
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Form Submission
+        document.querySelector('.contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('MESSAGE TRANSMITTED SUCCESSFULLY');
+            e.target.reset();
+        });
+
+        // Button Click Effects
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!this.classList.contains('no-effect')) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(255, 255, 255, 0.4);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s ease-out;
+                        pointer-events: none;
+                    `;
+                    
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => ripple.remove(), 600);
+                }
+            });
+        });
+
+        // Ripple Animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .data-card, .timeline-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(50px)';
+            el.style.transition = 'all 0.8s ease';
+            observer.observe(el);
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('nav') && !e.target.closest('.mobile-nav')) {
+                mobileMenuToggle.classList.remove('active');
+                mobileNav.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
